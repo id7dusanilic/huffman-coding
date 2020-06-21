@@ -1,5 +1,5 @@
 struct Node {
   char data;
-  int freq;
+  char num;
   struct Node *left, *right;
 }
