@@ -1,7 +1,5 @@
 include structures.inc
 
-.code
-
 BUFFER_SIZE = 256 ; // Maximum number of characters that can be read
 MAX_LEN     = 256 ; // Maximum length of freq array
 
@@ -13,7 +11,13 @@ ReadText PROTO,
 Count PROTO,
   Content:  PTR BYTE,      ; // Pointer to String
   Freq:     PTR BYTE,      ; // Pointer to array containing frequency of each character
-  Len:      DWORD           ; // Number of different characters in Contents String
+  Len:      DWORD          ; // Length of Content string
+
+Trim PROTO,
+  Freq:     PTR BYTE       ; // Pointer to array containing frequency of each character
+  Len:      DWORD          ; // Length of freq array
+  Chars:    PTR Data_S     ; // Pointer to array of characters that appear at least once
+  Num:      DWORD          ; // Number of different characters in Chars
 
 Sort PROTO,
   Array:    PTR Data_S,    ; // Pointer to array to be sorted

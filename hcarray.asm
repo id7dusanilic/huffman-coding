@@ -47,6 +47,35 @@ LOCAL FileHandle: DWORD
   pop ecx
   pop edx
 
+  ret
 ReadText ENDP
+
+Count PROC,
+  Content:  PTR BYTE,      ; // Pointer to String
+  Freq:     PTR BYTE,      ; // Pointer to array containing frequency of each character
+  Len:      DWORD,         ; // Length of Content string
+
+  push ecx
+  push esi
+  push edi
+
+  mov esi, Content
+  mov edi, Freq
+  mov ecx, Len
+
+  l1:
+  ; // Proveriti adresiranje edi[esi]
+    inc edi[esi]
+    inc edi
+    inc esi
+  loop l1
+  mov Num, eax
+
+  pop edi
+  pop esi
+  pop ecx
+
+  ret
+Count ENDP
 
 END
