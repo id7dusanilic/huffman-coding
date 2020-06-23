@@ -2,18 +2,18 @@
 .model flat, stdcall
 .stack 4096
 ExitProcess proto, dwExitCode:dword
-include Irvine.32.inc
+include Irvine32.inc
 include hcarray.inc
 
 .data?
   FileHandle        DWORD ?
   FileContent       BYTE  BUFFER_SIZE DUP(?)
-  CharactersRead    BYTE  ? ; // Number of characters read from a file
+  CharactersRead    DWORD  ? ; // Number of characters read from a file
 
 .data
   FileName          BYTE  "example.txt",0
-  FileOpenErrMsg  BYTE  "Error occurred while opening file.", 0
-  FileReadErrMsg  BYTE  "Error occurred while reading file.", 0
+  FileOpenErrMsg    BYTE  "Error occurred while opening file.", 0
+  FileReadErrMsg    BYTE  "Error occurred while reading file.", 0
 
 .code
   main proc
@@ -22,7 +22,7 @@ include hcarray.inc
     .IF eax == INVALID_HANDLE_VALUE
       mov   edx, OFFSET FileOpenErrMsg
       call  WriteString
-      jmp   end
+      jmp   end_label
     .ELSE
       mov   FileHandle, eax ; // File handle is stored in eax after calling OpenInputFile
       mov   edx, OFFSET FileContent
@@ -44,6 +44,8 @@ include hcarray.inc
 reading_error:
   mov   edx, OFFSET FileReadErrMsg
   call  WriteString
-end:
+end_label:
+
+  call ExitProcess
   main endp
 END main

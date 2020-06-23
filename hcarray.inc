@@ -1,20 +1,19 @@
-.386
-.model flat, stdcall
-
 include structures.inc
+
+.code
 
 BUFFER_SIZE = 256 ; // Maximum number of characters that can be read
 MAX_LEN     = 256 ; // Maximum length of freq array
 
-ReadFile PROTO,
+ReadText PROTO,
   Name:     PTR BYTE,      ; // Pointer to File Name
   Content:  PTR BYTE,      ; // Pointer to File Content
-  Len:      BYTE           ; // Number of characters read from a file
+  Len:      DWORD           ; // Number of characters read from a file
 
 Count PROTO,
   Content:  PTR BYTE,      ; // Pointer to String
   Freq:     PTR BYTE,      ; // Pointer to array containing frequency of each character
-  Len:      BYTE           ; // Number of different characters in Contents String
+  Len:      DWORD           ; // Number of different characters in Contents String
 
 Sort PROTO,
   Array:    PTR Data_S,    ; // Pointer to array to be sorted

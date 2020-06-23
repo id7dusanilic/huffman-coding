@@ -1,13 +1,13 @@
-include Irvine.32.inc
+include Irvine32.inc
 include hcarray.inc
 
 .code
 
 ; //============================================================================
-ReadFile PROC,
+ReadText PROC,
   Name:     PTR BYTE,      ; // Pointer to File Name
   Content:  PTR BYTE,      ; // Pointer to File Content
-  Len:      BYTE           ; // Number of characters read from a file
+  Len:      DWORD           ; // Number of characters read from a file
 ; //============================================================================
 LOCAL FileHandle: DWORD
 
@@ -47,6 +47,6 @@ LOCAL FileHandle: DWORD
   pop ecx
   pop edx
 
-ReadFile ENDP
+ReadText ENDP
 
 END
