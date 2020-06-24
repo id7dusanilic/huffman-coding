@@ -1,30 +1,33 @@
 include structures.inc
 
+.code
+
 BUFFER_SIZE = 256 ; // Maximum number of characters that can be read
 MAX_LEN     = 256 ; // Maximum length of freq array
 
-ReadText PROTO,
-  Name:     PTR BYTE,      ; // Pointer to File Name
-  Content:  PTR BYTE,      ; // Pointer to File Content
-  Len:      DWORD           ; // Number of characters read from a file
+; // Reads file with FileName and stores its content in Content
+ReadText PROTO,\
+  FileName: PTR BYTE,\    ; // Pointer to File Name
+  Content:	PTR BYTE      ; // Pointer to File Content
 
-Count PROTO,
-  Content:  PTR BYTE,      ; // Pointer to String
-  Freq:     PTR BYTE,      ; // Pointer to array containing frequency of each character
-  Len:      DWORD          ; // Length of Content string
+; // Counts the number of times each ASCII table appears in Content
+Count PROTO,\
+  Content:  PTR BYTE,\    ; // Pointer to String
+  Freq:     PTR BYTE,\    ; // Pointer to array containing frequency of each character
+  Len:      DWORD         ; // Length of Content string
 
-Trim PROTO,
-  Freq:     PTR BYTE       ; // Pointer to array containing frequency of each character
-  Len:      DWORD          ; // Length of freq array
-  Chars:    PTR Data_S     ; // Pointer to array of characters that appear at least once
-  Num:      DWORD          ; // Number of different characters in Chars
+; // Removes chars that don't appear at least once in the content, and forms a
+; // new array containing each of the remaining character's frequency
+Trim PROTO,\
+  Freq:     PTR BYTE,\    ; // Pointer to array containing frequency of each char
+  Chars:    PTR Data_S		; // Pointer to array of chars that appear at least once
 
-Sort PROTO,
-  Array:    PTR Data_S,    ; // Pointer to array to be sorted
-  Len:      BYTE           ; // Length of array to be sorted
+; // Sorts the array in ascending order by frequency of characters
+Sort PROTO,\
+  Array:    PTR Data_S,\	; // Pointer to array to be sorted
+  Len:      DWORD			    ; // Length of array to be sorted
 
-
-MakeArray PROTO,
-  Freq:     PTR BYTE,      ; // Pointer to array containing frequency of each character
-  Result:   PTR Data_S,    ; // Pointer to resulting array
-  Len:      BYTE           ; // Length of freq array
+; // Prints the resulting array in format <char - frequency>
+PrintResults PROTO,\
+  Result:   PTR Data_S,\	; // Pointer to resulting array
+  Len:      DWORD			    ; // Length of resulting array

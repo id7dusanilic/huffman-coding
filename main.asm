@@ -2,50 +2,59 @@
 .model flat, stdcall
 .stack 4096
 ExitProcess proto, dwExitCode:dword
+
 include Irvine32.inc
 include hcarray.inc
 
 .data?
-  FileHandle        DWORD ?
-  FileContent       BYTE  BUFFER_SIZE DUP(?)
-  CharactersRead    DWORD  ? ; // Number of characters read from a file
+FileHandle        DWORD		?
+CharactersRead    DWORD		?
+DiffCharacters		DWORD		?
+FileName					BYTE		MAX_LEN				DUP(?)
+FileContent       BYTE		BUFFER_SIZE 	DUP(?)
+Freq							BYTE		MAX_LEN				DUP(0)
+Result						Data_S	MAX_LEN				DUP(<>)
 
 .data
-  FileName          BYTE  "example.txt",0
-  FileOpenErrMsg    BYTE  "Error occurred while opening file.", 0
-  FileReadErrMsg    BYTE  "Error occurred while reading file.", 0
+;FileName					 BYTE  "example.txt", 0
+InputMsg					BYTE  "Please enter the file name: ",0
 
 .code
-  main proc
-    mov   edx, OFFSET FileName
-    call  OpenInputFile
-    .IF eax == INVALID_HANDLE_VALUE
-      mov   edx, OFFSET FileOpenErrMsg
-      call  WriteString
-      jmp   end_label
-    .ELSE
-      mov   FileHandle, eax ; // File handle is stored in eax after calling OpenInputFile
-      mov   edx, OFFSET FileContent
-      mov   ecx, BUFFER_SIZE
-      mov   eax, FileHandle
-      call  ReadFromFile
-      jc    reading_error ; // Carry Flag is set if an error occurred while reading_error
-      mov   CharactersRead, eax
-      ; // Terminating string with "\0"
-      add   edx, CharactersRead
-      mov   BYTE PTR [edx], 0
-      ; // Closing the file
-      mov   eax, FileHandle
-      call  CloseFile
-      ; // Checking if reading was successful
-      mov edx, OFFSET FileContent
-      call WriteString
-    .ENDIF
-reading_error:
-  mov   edx, OFFSET FileReadErrMsg
-  call  WriteString
-end_label:
 
-  call ExitProcess
-  main endp
+main PROC
+
+; // Printing input message
+mov			edx, OFFSET InputMsg
+call		WriteString
+
+; // Reading file name
+mov 		ecx, BUFFER_SIZE-1
+mov 		edx, OFFSET FileName
+call		ReadString
+
+; // Reading the file, file content is stored in FileContent. Length of content
+; // is stored in eax register
+INVOKE 	ReadText, OFFSET FileName, OFFSET FileContent
+mov 		CharactersRead, eax
+
+; // Counting how many times each character from ASCII table appeared in content
+; // The number is stored in Freq, where index in the array corresponds to ASCII
+; // code of each character
+INVOKE 	Count, OFFSET FileContent, OFFSET Freq, CharactersRead
+
+; // Removing characters that didn't appear in the content, and making a new
+; // array, where a character and is frequency is stored (Data_S struct).
+; // Number of different characters that appear at least once is stored in eax.
+INVOKE 	Trim, OFFSET Freq, OFFSET Result
+mov 		DiffCharacters, eax
+
+; // Sorting the array in ascending order by the frequency of characters
+INVOKE 	Sort, OFFSET Result, DiffCharacters
+
+; // Prints the resulting array in format <char - frequency>
+INVOKE 	PrintResults, OFFSET Result, DiffCharacters
+
+main ENDP
+
+INVOKE ExitProcess, 0
 END main

@@ -1,4 +1,5 @@
+; // Holds a symbol (character) and its frequency
 Data_S STRUCT
-  data BYTE ?
+  sym  BYTE ?
   num  BYTE ?
 Data_S ENDS
