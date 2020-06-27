@@ -55,8 +55,34 @@ outloop:
 	cmp dl, 2
 	jnz elif
 		; // 2 elements on stack
+		mov cx, [esp]
+		mov ah, (Node_S PTR[edi + ecx * TYPE Node_S]).info.num
+		mov cx, [esp + TYPE cx]
+		cmp (Node_S PTR[esi]).info.num, ah
+		jns noswap
+		cmp (Node_S PTR[edi + ecx * TYPE Node_S]).info.num, ah
+		jns noswap
+
+		movzx ecx, Data_S PTR [esi]
+		mov (Node_S PTR [edi + ebx * TYPE Node_S]), 0
+		mov (Node_S PTR [edi + ebx * TYPE Node_S]).info, cx
+		mov (Node_S PTR [edi + ebx * TYPE Node_S]).left, NUL
+		mov (Node_S PTR [edi + ebx * TYPE Node_S]).right, NUL
+		add esi, TYPE Data_S
+		inc dh
+
 		pop cx
 		dec dl
+		xchg [esp], cx
+		push bx
+		inc dl
+		inc ebx
+		jmp swap
+
+	noswap:
+		pop cx
+		dec dl
+	swap:
 		movzx ax, (Node_S PTR [edi + ecx * TYPE Node_S]).info.num
 		mov (Node_S PTR [edi + ebx * TYPE Node_S]).left, cl
 		pop cx
@@ -64,6 +90,8 @@ outloop:
 		add al, (Node_S PTR [edi + ecx * TYPE Node_S]).info.num
 		mov (Node_S PTR [edi + ebx * TYPE Node_S]).info.num, al
 		mov (Node_S PTR [edi + ebx * TYPE Node_S]).right, cl
+		push bx
+		inc dl
 		inc ebx
 		jmp bottom
 	elif:
@@ -71,9 +99,9 @@ outloop:
 	cmp dh, len
 	jz els
 		dec dh
-		movzx cx, [esp]
+		mov cx, [esp]
 		movzx eax, (Node_S PTR[edi + ecx * TYPE Node_S]).info.num
-		cmp (Data_S PTR[esi + TYPE Data_S]).num, eax
+		cmp (Data_S PTR[esi + TYPE Data_S]).num, al
 		js lesser ; // a[i+1] < stack.top()
 			mov cx, Data_S PTR [esi]
 			mov (Node_S PTR [edi + ebx * TYPE Node_S]).info, cx	
@@ -82,8 +110,10 @@ outloop:
 			movzx eax, (Data_S PTR[esi]).num
 			inc ebx
 
+			mov cl, bl
+			dec cl
 			mov (Node_S PTR [edi + ebx * TYPE Node_S]), 0
-			mov (Node_S PTR [edi + ebx * TYPE Node_S]).left, dh
+			mov (Node_S PTR [edi + ebx * TYPE Node_S]).left, cl
 
 			add esi, TYPE Data_S
 			inc dh
@@ -118,7 +148,7 @@ outloop:
 
 			mov (Node_S PTR [edi + ebx * TYPE Node_S]), 0
 			mov (Node_S PTR [edi + ebx * TYPE Node_S]).info.num, al
-			mov al, dh
+			mov al, bl
 			dec al
 			mov (Node_S PTR [edi + ebx * TYPE Node_S]).right, al
 			dec al
@@ -152,6 +182,6 @@ outloop:
 		inc dh
 	bottom:
 	cmp dh, len
-	jnz outloop
+	js outloop
 main ENDP
 END main
