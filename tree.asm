@@ -5,9 +5,9 @@
 include structures.inc
 
 .data
-len		BYTE	6
-input	Data_S <'a', 5>, <'b', 9>, <'c', 12>, <'d', 13>, <'e', 16>, <'f', 45>
-res Node_S 11 DUP(<>)
+len		BYTE	8
+input	Data_S <'z', 2>, <'k', 7>, <'m', 24>, <'c', 32>, <'u', 37>, <'d', 42>, <'l', 42>, <'e', 120>
+res Node_S 15 DUP(<>)
 
 .code
 NUL = 255
@@ -108,6 +108,8 @@ outloop:
 			mov (Node_S PTR [edi + ebx * TYPE Node_S]).left, NUL
 			mov (Node_S PTR [edi + ebx * TYPE Node_S]).right, NUL
 			movzx eax, (Data_S PTR[esi]).num
+			add esi, TYPE Data_S
+			inc dh
 			inc ebx
 
 			mov cl, bl
@@ -115,14 +117,13 @@ outloop:
 			mov (Node_S PTR [edi + ebx * TYPE Node_S]), 0
 			mov (Node_S PTR [edi + ebx * TYPE Node_S]).left, cl
 
-			add esi, TYPE Data_S
-			inc dh
-
 			pop cx
 			dec dl
 			add al, (Node_S PTR [edi + ecx * TYPE Node_S]).info.num
 			mov (Node_S PTR [edi + ebx * TYPE Node_S]).info.num, al
 			mov (Node_S PTR [edi + ebx * TYPE Node_S]).right, cl
+			push bx
+			inc dl
 			inc ebx
 		jmp bottom
 		lesser:
