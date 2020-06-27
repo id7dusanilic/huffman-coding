@@ -46,7 +46,7 @@ int main() {
 			b[ib++] = tmp;
 		}
 		else if (ia < N -1) {
-			if(a[ia].cnt < st.top() && a[ia+1].cnt < st.top()) {
+			if(a[ia+1].cnt < st.top()) {
 				b[ib++] = a[ia++].cnt;
 				b[ib++] = a[ia++].cnt;
 
@@ -54,9 +54,9 @@ int main() {
 				b[ib++] = st.top();
 			}
 			else {
+				b[ib++] = a[ia].cnt;
 				tmp = st.top();
 				st.pop();
-				b[ib++] = a[ia].cnt;
 				st.push(tmp + a[ia++].cnt);
 				b[ib++] = st.top();
 			}
