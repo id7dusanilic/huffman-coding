@@ -66,7 +66,11 @@ mov		BYTE PTR[edi], 0
 mov		al, BYTE PTR[esi]
 .IF(al != 0)
 call	WriteChar
-mov		al, ' '
+mov		al, 9
+call	WriteChar
+mov		al, BYTE PTR[esi+1]
+call	WriteDec
+mov		al, 9
 call	WriteChar
 mov		edx, Code
 call	WriteString

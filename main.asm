@@ -3,10 +3,6 @@
 .stack 4096
 ExitProcess proto, dwExitCode:dword
 
-FormTree PROTO,	input: 	PTR Data_S, \
-		len: 	BYTE, \
-		output: PTR Node_S
-
 include Irvine32.inc
 include prototypes.inc
 
@@ -21,7 +17,7 @@ Array	BYTE	MAX_DEPTH DUP(?)
 .code
     main PROC
 
-	INVOKE FormTree, OFFSET input, len, OFFSET output
+	INVOKE FormTree, OFFSET input, len, OFFSET nodes
 	INVOKE PrintCodes, OFFSET nodes, 14, OFFSET Array, 0
 
     INVOKE ExitProcess, 0

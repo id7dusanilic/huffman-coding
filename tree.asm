@@ -1,17 +1,28 @@
+.model flat, stdcall
+
+include prototypes.inc
 .code
 
 FormTree PROC,	input: 	PTR Data_S, \
 		len: 	BYTE, \
 		output: PTR Node_S
 
-	mov esi, input
-	mov edi, output
-	xor ebx, ebx ; // counter in output array
-	mov edx, ebx
-	; // cx used as temporary value, eax as count sum
+	push eax
+	push ebx
+	push ecx
+	push edx
+	push esi
+	push edi
+
+	; // cx used as temporary register, eax as count sum (mostly)
 	; // dh - input index, dl - stack size
+
 	; // esi incremented after every read,
 	; // edi constant with offset set in ebx (which is incremented)
+	mov esi, input
+	mov edi, output
+	xor ebx, ebx ; // counter in output array, set to 0
+	mov edx, ebx
 
 	movzx ecx, Data_S PTR [esi]
 	mov (Node_S PTR [edi + ebx * TYPE Node_S]), 0
@@ -178,6 +189,12 @@ outerloop:
 	cmp dh, len
 	js outerloop
 
+	pop edi
+	pop esi
+	pop edx
+	pop ecx
+	pop ebx
+	pop eax
 ret
 FormTree ENDP
 END

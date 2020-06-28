@@ -14,3 +14,11 @@ PrintCodes		PROTO,\
 	Dist:		DWORD,\			; // Distance from first element in Nodes array
 	Code:		PTR BYTE,\		; // Array containing code for a leaf
 	Index:		DWORD			; // Current index in Code array 
+
+
+; // Function that implements creation of a binary Huffman tree and takes an 
+; // ascending array of <char, freq> structures as input.
+; // The function returns a binary tree formed in a array with indices pointing to children
+FormTree		PROTO,	input: 	PTR Data_S, \
+				len: 	BYTE, \
+				output: PTR Node_S
