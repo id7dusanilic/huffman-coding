@@ -4,8 +4,8 @@ FormTree PROC,	input: 	PTR Data_S, \
 		len: 	BYTE, \
 		output: PTR Node_S
 
-	mov esi, offset input
-	mov edi, offset res
+	mov esi, input
+	mov edi, output
 	xor ebx, ebx ; // counter in output array
 	mov edx, ebx
 	; // cx used as temporary value, eax as count sum
