@@ -1,24 +1,17 @@
-.386
-.model flat,stdcall
-.stack 4096
-
-include structures.inc
-
-.data
-len		BYTE	8
-input	Data_S <'z', 2>, <'k', 7>, <'m', 24>, <'c', 32>, <'u', 37>, <'d', 42>, <'l', 42>, <'e', 120>
-res Node_S 15 DUP(<>)
-
 .code
-NUL = 255
 
-main PROC
+FormTree PROC,	input: 	PTR Data_S, \
+		len: 	BYTE, \
+		output: PTR Node_S
+
 	mov esi, offset input
 	mov edi, offset res
 	xor ebx, ebx ; // counter in output array
 	mov edx, ebx
 	; // cx used as temporary value, eax as count sum
 	; // dh - input index, dl - stack size
+	; // esi incremented after every read,
+	; // edi constant with offset set in ebx (which is incremented)
 
 	movzx ecx, Data_S PTR [esi]
 	mov (Node_S PTR [edi + ebx * TYPE Node_S]), 0
@@ -51,7 +44,7 @@ main PROC
 	
 	mov dh, 2
 
-outloop:
+outerloop:
 	cmp dl, 2
 	jnz elif
 		; // 2 elements on stack
@@ -183,6 +176,8 @@ outloop:
 		inc dh
 	bottom:
 	cmp dh, len
-	js outloop
-main ENDP
-END main
+	js outerloop
+
+ret
+FormTree ENDP
+END
