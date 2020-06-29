@@ -7,7 +7,6 @@ FormTree PROC,	input: 	PTR Data_S, \
 		len: 	BYTE, \
 		output: PTR Node_S
 
-	push eax
 	push ebx
 	push ecx
 	push edx
@@ -188,13 +187,15 @@ outerloop:
 	bottom:
 	cmp dh, len
 	js outerloop
+	
+	mov eax, len
+	sub eax, 2
 
 	pop edi
 	pop esi
 	pop edx
 	pop ecx
 	pop ebx
-	pop eax
 ret
 FormTree ENDP
 END
