@@ -188,9 +188,9 @@ outerloop:
 	cmp dh, len
 	js outerloop
 	
-	mov eax, len
-	mul eax, 2
-	dec eax
+	;movzx eax, len
+	;shl eax, 1
+	mov eax, ebx
 
 	pop edi
 	pop esi

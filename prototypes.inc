@@ -1,9 +1,14 @@
+ifndef _PROTOTYPES_INC_
+_PROTOTYPES_INC_ = 0
+.model flat, stdcall
+
 include structures.inc
+include configuration.inc
 
 .code
 
-MAX_DEPTH	= 8		; // Represents maximum number of levels in Huffman Tree
-NUL			= 255	; // Not a leaf
+;MAX_DEPTH	= 20		; // Represents maximum number of levels in Huffman Tree
+;NUL			= 255	; // Not a leaf
 
 ; // Goes through Huffman Tree and prints out codes for each leaf in the Tree
 ; // FirstNode is pointer to the first element of the array which stores
@@ -23,3 +28,5 @@ PrintCodes		PROTO,\
 FormTree		PROTO,	input: 	PTR Data_S, \
 				len: 	BYTE, \
 				output: PTR Node_S
+
+endif
