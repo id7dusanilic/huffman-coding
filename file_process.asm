@@ -1,5 +1,5 @@
 include Irvine32.inc
-include hcarray.inc
+include file_process.inc
 
 .data
 FileOpenErrMsg		BYTE  "Error occurred while opening file.", 0

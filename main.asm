@@ -4,8 +4,8 @@
 ExitProcess proto, dwExitCode:dword
 
 include Irvine32.inc
-include hcarray.inc
-include prototypes.inc
+include file_process.inc
+include huffman_tree.inc
 include configuration.inc
 
 .data?
@@ -14,16 +14,17 @@ CharactersRead		DWORD		?	; // Number of characters read from the input file
 DiffCharacters		DWORD		?	; // Number of different characters read from the input file
 FileName			BYTE		MAX_LEN			DUP(?)	; // Holds the name of the file
 FileContent			BYTE		BUFFER_SIZE 	DUP(?)	; // Holds the content of the file
-Freq				BYTE		MAX_LEN			DUP(0)	; // Holds frequency of each character
 ProcessedInput		Data_S		MAX_LEN			DUP(<>)	; // Array that holds a character and its frequency
 Array				BYTE		MAX_DEPTH		DUP(?)	; // Auxiliary array (used to temporarily store a code)
 RootIndex			DWORD		?	; // Index of root node in the Huffman tree (stored in array)
 
 .data
-InputMsg			BYTE		"Please enter the file name: ",0
-len					BYTE		8
-input				Data_S		<'z', 2>, <'k', 7>, <'m', 24>, <'c', 32>, <'u', 37>, <'d', 42>, <'l', 42>, <'e', 120>
-HuffmanTree			Node_S		255				DUP(<>)	
+InputMsg			BYTE		"Please enter the file name: ", 0
+TitleBar			BYTE		"Symbol", 9, "Frequency", 9, "Code", 0
+Freq				BYTE		MAX_LEN			DUP(0)	; // Holds frequency of each character
+; len				BYTE		8
+; input				Data_S		<'z', 2>, <'k', 7>, <'m', 24>, <'c', 32>, <'u', 37>, <'d', 42>, <'l', 42>, <'e', 120>
+HuffmanTree			Node_S		MAX_LEN			DUP(<>)	
 
 .code
 
@@ -58,15 +59,23 @@ mov 	DiffCharacters, eax
 INVOKE 	Sort, OFFSET ProcessedInput, DiffCharacters
 
 ; // Prints the resulting array in format <char - frequency>
-INVOKE 	PrintResults, OFFSET ProcessedInput, DiffCharacters
+; INVOKE 	PrintResults, OFFSET ProcessedInput, DiffCharacters
 
 ; // Forming the Huffman tree. Number of nodes in Huffman tree is stored in eax
 INVOKE	FormTree, OFFSET ProcessedInput, BYTE PTR DiffCharacters, OFFSET HuffmanTree
 ; INVOKE	FormTree, OFFSET input, len, OFFSET HuffmanTree
 mov		RootIndex, eax
 
+; // Printing the title
+mov		al, 10
+call	WriteChar
+mov		edx, OFFSET TitleBar
+call	WriteString
+mov		al, 10
+call	WriteChar
+
 ; // Printing results
-INVOKE	PrintCodes, OFFSET HuffmanTree, eax, OFFSET Array, 0
+INVOKE	PrintCodes, OFFSET HuffmanTree, RootIndex, OFFSET Array, 0
 
 INVOKE ExitProcess, 0
 main ENDP

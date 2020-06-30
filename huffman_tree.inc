@@ -1,14 +1,11 @@
-ifndef _PROTOTYPES_INC_
-_PROTOTYPES_INC_ = 0
+ifndef _HUFFMAN_TREE_INC_
+_HUFFMAN_TREE_INC_ = 0
 .model flat, stdcall
 
 include structures.inc
 include configuration.inc
 
 .code
-
-;MAX_DEPTH	= 20		; // Represents maximum number of levels in Huffman Tree
-;NUL			= 255	; // Not a leaf
 
 ; // Goes through Huffman Tree and prints out codes for each leaf in the Tree
 ; // FirstNode is pointer to the first element of the array which stores
@@ -25,8 +22,9 @@ PrintCodes		PROTO,\
 ; // ascending array of <char, freq> structures as input.
 ; // The function returns a binary tree formed in a array with indices pointing to children
 ; // The function also leaves number of nodes in the tree in eax register
-FormTree		PROTO,	input: 	PTR Data_S, \
-				len: 	BYTE, \
-				output: PTR Node_S
+FormTree		PROTO,\
+	input: 		PTR Data_S,\	; // Input array containing all characters and their frequencies
+	len:		BYTE, \			; // Length of the input array
+	output:		PTR Node_S		; // Output: Huffman Tree stored in array
 
 endif
