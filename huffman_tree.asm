@@ -1,5 +1,5 @@
 include Irvine32.inc
-include prototypes.inc
+include huffman_tree.inc
 include configuration.inc
 
 .data
