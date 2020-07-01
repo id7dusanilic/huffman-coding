@@ -1,6 +1,6 @@
 \documentclass[a4paper, 12pt]{article}
 \usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
+%\usepackage[T1]{fontenc}
 \usepackage[serbian]{babel}
 \usepackage{amsmath}
 \usepackage[margin = 2cm]{geometry}
@@ -10,8 +10,7 @@
 \usepackage{tabularx}
 \usepackage{multirow}
 \usepackage{subcaption}
-
-
+\usepackage{tikz}
 
 \newcolumntype{R}{>{\raggedleft\arraybackslash}X}
 \newcolumntype{C}{>{\centering\arraybackslash}X}
@@ -25,6 +24,8 @@
 \begin{center}
 13E043RE - Računarska elektronika
 \end{center}}
+
+\newcommand{\Huff}{\emph{Huffman}}
 
 \title{
 \Large{Univerzitet u Beogradu - Elektrotehnički fakultet}\\
@@ -74,11 +75,11 @@ učestanost pojavljivanja pojedinih simbola kao i kodne reči koje su dodeljene 
 od učestanosti ponavljanja datog simbola u određenom tekstu, odnosno tekstualnoj datoteci. Cilj je da se kodovanjem
 smanji potreban memorijski prostor za čuvanje sadržaja nekog fajla.
 
-\textit{Huffman}-ovo kodovanje spada u \textit{prefix} kodove, odnosno zadovoljava pravilo da nijedan kod nije prefiks nekog drugog koda
+\textit{Huffman}-ovo kodovanje spada u \textit{prefix} kodove, odnosno zadovoljava pravilo da nijedan k\^ od nije prefiks nekog drugog koda
 (kodovi u kojima je svaki simbol predstavljen istim brojem bita automatski zadovoljavaju pravilo prefiksa).
 Ovo predstavlja dobru osobinu jer znatno olakšava dekodovanje.
 
-U daljem tekstu težićemo da detaljno pojasnimo postupak kodovanja.
+U daljem tekstu će detaljno biti objašnjen postupak kodovanja.
 
 \subsection*{Struktura projekta}
 
@@ -137,7 +138,9 @@ Grafički prikaz struktura koje su korišćene prikazan je na slici \ref{struct}
 
 Polje \verb|symbol| strukture \verb|Data_S| sadrži karakter, a polje \verb|number| sadrži njegov broj ponavljanja.
 Struktura \verb|Node_S| predstavlja čvor u \textit{Huffman}-ovom stablu . Polja \verb|left| i \verb|right| koriste se 
-za određivanje deteta datog čvora. Detaljnije o ovome u nastavku.
+za određivanje deteta datog čvora. 
+
+\Huff-ovo stablo se čuva u obliku dvostruko ulančanog niza, gde polja \verb|left| i \verb|right| sadrže indekse čvorova oba deteta u istom nizu.
 
 \btmline\newpage
 %==========================================================================
@@ -149,6 +152,71 @@ za određivanje deteta datog čvora. Detaljnije o ovome u nastavku.
 \btmline\newpage
 %==========================================================================
 \section*{Formiranje stabla}
+Nakon sortiranja struktura \verb|Data_S| u nerastućem poretku po broju pojavljivanja karaktera, potrebno je formirati \emph{Huffman}-ovo stablo. \\
+Osnovni princip iza \Huff-ovog algoritma je združivanje dva čvora sa najmanjim brojem pojavljivanja. Ti čvorovi u prvoj iteraciji predstavljaju listove stabla, odnosno dva najređe korišćena karaktera u ulaznoj datoteci. Od njih se pravi novi čvor, sa ekvivalentnim brojem pojavljivanja jednakim zbiru pojavljivanja dva karaktera od kojih je sačinjen.
+
+Primera radi, biće pokazan algoritam formiranja stabla na ulaznim podacima sledećeg sadržaja (navedeni su karakter i broj njegovog pojavljivanja):
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{| c ||  c  c  c  c  c  c  c  c |}
+		\hline
+		$c$ & z & k & m & c & u & d & l & e \\ \hline
+		$n$ & 2 & 7 & 24 & 32 & 37 & 42 & 42 & 120 \\ \hline
+	\end{tabular}
+\end{table}
+
+Počinje se združivanjem karaktera \verb|z| i \verb|k| koji zajedno čine čvor stabla (tipa \verb|Node_S|) koji nema reprezentujući karakter, ekvivalentni broj pojavljivanja mu je $9$, i sadrži reference na čvorove ispod sebe (decu). 
+
+Takav čvor (bez karaktera) se stavlja u privremeni niz, gde čeka da bude združen sa drugim takvim čvorom, ili sa novim karakterom. U oba slučaja, iskorišćeni čvor se briše; a novodobijeni čvor se dodaje u privremeni niz. \\
+Nakon navedenog združivanja, dva čvora sa najmanjim brojem pojavljivanja su:
+\begin{itemize}
+	\item Novodobijeni čvor sa 9 pojavljivanja
+	\item Karakter \verb|m| sa 24 pojavljivanja
+\end{itemize}
+Algoritam se zatim ponavlja u krug: \\
+Združivanjem ta dva čvora dobija se novi čvor kome je ekvivalentni broj pojavljivanja jednak $33$, \ldots
+
+Pogodno je primetiti da su dva najređa čvora uvek jedna od sledećih mogućnosti:
+\begin{enumerate}
+	\item \textbf{Dva nova karaktera} ukoliko su brojevi pojavljivanja sledeća dva neiskorišćena karaktera manja od broja pojavljivanja svakog čvora u privremenom nizu
+	\item \textbf{Dva čvora iz privremenog niza} ukoliko su brojevi pojavljivanja čvorova u privremenom nizu (posmatrajući najmanja dva) manji od broja pojavljivanja najređeg neiskorišćenog karaktera
+	\item \textbf{Jedan novi karakter i jedan čvor iz privremenog niza} u ostalim slučajevima
+\end{enumerate}
+
+U cilju određivanja koji elementi će biti združeni, dovoljno je izvršiti do dva poređenja čvorova, i poređenja dužina privremenog niza sa 2, i broja preostalih elemenata ulaznog niza sa 2 (očigledno je da je prva mogućnost moguća samo ako su preostala barem 2 ulazna elementa, i slično važi za mogućnost 2).
+
+Imajući navedene mogućnosti u vidu, moguće je privremeni niz čuvati odvojeno od ulaznih podataka, i sortirati ga nezavisno. Time će privremeni niz imati značajno manje elemenata pa je proces sortiranja brži. Pomenuto sortiranje privremenog niza se može obavljati bilo kad, pre grananja na navedene mogućnosti, ili nakon, kada je novoformirani čvor ubačen u niz.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+	\tikzstyle{every node}=[circle,draw]
+
+	\node(z){306}
+	child{node{120}}
+	child[missing] % children are further apart so there is no overlap
+	child{
+		node{186}
+		child{ 	node{111}
+			child{node{69}}
+			child{node{42}}
+		}
+		child[missing]
+		child{ 	node{75}
+			child{node{42}}
+			child{node{33}
+				child{node{24}}
+				child{node{9}
+					child{node{2}}
+					child{node{7}}
+				}
+			}
+		}
+	};
+\end{tikzpicture}
+\caption{Primer \emph{Huffman}-ovog binarnog stabla za kodiranje}
+\end{figure}
+
 \btmline\newpage
 %==========================================================================
 \section*{Dobijanje koda na osnovu stabla}
