@@ -20,10 +20,9 @@ RootIndex			DWORD		?	; // Index of root node in the Huffman tree (stored in arra
 
 .data
 InputMsg			BYTE		"Please enter the file name: ", 0
+ExitMsg				BYTE		10, "Press ENTER to exit ...", 0
 TitleBar			BYTE		"Symbol", 9, "Frequency", 9, "Code", 0
 Freq				BYTE		MAX_LEN			DUP(0)	; // Holds frequency of each character
-; len				BYTE		8
-; input				Data_S		<'z', 2>, <'k', 7>, <'m', 24>, <'c', 32>, <'u', 37>, <'d', 42>, <'l', 42>, <'e', 120>
 HuffmanTree			Node_S		MAX_LEN			DUP(<>)	
 
 .code
@@ -35,7 +34,7 @@ mov		edx, OFFSET InputMsg
 call	WriteString
 
 ; // Reading file name
-mov 	ecx, BUFFER_SIZE;-1
+mov 	ecx, BUFFER_SIZE-1
 mov 	edx, OFFSET FileName
 call	ReadString
 
@@ -63,7 +62,6 @@ INVOKE 	Sort, OFFSET ProcessedInput, DiffCharacters
 
 ; // Forming the Huffman tree. Number of nodes in Huffman tree is stored in eax
 INVOKE	FormTree, OFFSET ProcessedInput, BYTE PTR DiffCharacters, OFFSET HuffmanTree
-; INVOKE	FormTree, OFFSET input, len, OFFSET HuffmanTree
 mov		RootIndex, eax
 
 ; // Printing the title
@@ -76,6 +74,14 @@ call	WriteChar
 
 ; // Printing results
 INVOKE	PrintCodes, OFFSET HuffmanTree, RootIndex, OFFSET Array, 0
+
+
+mov		edx, OFFSET ExitMsg
+call	WriteString
+
+mov 	ecx, 1
+mov 	edx, OFFSET FileName
+call	ReadString
 
 INVOKE ExitProcess, 0
 main ENDP
