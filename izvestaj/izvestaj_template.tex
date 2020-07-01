@@ -1,13 +1,11 @@
 \documentclass[a4paper, 12pt]{article}
 \usepackage[utf8]{inputenc}
-\usepackage[T1, T2A]{fontenc}
+\usepackage[T1]{fontenc}
 \usepackage[serbian]{babel}
 \usepackage{amsmath}
-\usepackage[margin = 1.5cm]{geometry}
+\usepackage[margin = 2cm]{geometry}
 \usepackage{graphicx}
 \usepackage{nopageno}
-%\usepackage[figurename = Слика]{caption}
-%\usepackage[tablename = Табела]{caption}
 \usepackage{blindtext}
 \usepackage{tabularx}
 \usepackage{multirow}
@@ -38,11 +36,12 @@
 \includegraphics[scale=1.2]{logo}
 \end{figure}
 \vspace{3cm}
-\Huge{\textbf{Projekat: \textit{Huffman Coding}}} \\
-\LARGE{\textbf{Implementacija u \textbf{MASM} asemblerskom jeziku}}
-\vspace{1cm}
-\Large{13E043RE - Računarska elektronika}\\
+\Huge{\textbf{\textit{Huffman Coding}}} \\
+\vspace{0.5cm}
+\Large{\textbf{Implementacija u MASM asemblerskom jeziku}}\\
 \vspace{2cm}
+\Large{13E043RE - Računarska elektronika}\\
+\vfill
 }
 \author{Radomir Vranjevac 2017/0103\\Dušan Ilić 2017/0070}
 \date{}
@@ -56,8 +55,105 @@
 \newpage
 %==========================================================================
 
-\section*{Zaključak}
+\section*{Zadatak}
+
+Potrebno je napisati program u \textbf{MASM} jeziku koji vrši \textit{Huffman}-ovo kodovanje simbola. Ovo
+kodovanje zasnovano je na verovatnoći pojavljivanja simbola gde se simboli sa najvećom verovatnoćom
+pojavljivanja koduju sa kodnom rečju najmanje dužine.
+
+Nakon pokretanja programa od korisnika se traži da unese naziv tekstualne datoteke nad kojom želi
+da primeni mehanizam \textit{Huffman}-ovog kodovanja. Kao rezultat kodovanja na konzoli se ispisuje
+učestanost pojavljivanja pojedinih simbola kao i kodne reči koje su dodeljene pojedinom simbolu.
+
+\btmline\newpage
+%==========================================================================
+
+\section*{Uvod}
+
+\textit{Huffman}-ovo kodovanje predstavlja algoritam za kodovanje simbola, gde dužina koda svakog simbola zavisi
+od učestanosti ponavljanja datog simbola u određenom tekstu, odnosno tekstualnoj datoteci. Cilj je da se kodovanjem
+smanji potreban memorijski prostor za čuvanje sadržaja nekog fajla.
+
+\textit{Huffman}-ovo kodovanje spada u \textit{prefix} kodove, odnosno zadovoljava pravilo da nijedan kod nije prefiks nekog drugog koda
+(kodovi u kojima je svaki simbol predstavljen istim brojem bita automatski zadovoljavaju pravilo prefiksa).
+Ovo predstavlja dobru osobinu jer znatno olakšava dekodovanje.
+
+U daljem tekstu težićemo da detaljno pojasnimo postupak kodovanja.
+
+\subsection*{Struktura projekta}
+
+Prilikom izrade projekta, projekat je podeljen na logičke celine. Ceo projekat se sastoji iz sledećih delova i fajlova:
+
+\begin{enumerate}
+\item \textbf{Konfiguracija} - sadrži fajl u kojem se nalaze definicije konstanti i parametara korišćenih u projektu, poput maksimalne dužine niza itd.
+	\begin{itemize}
+	\item \verb|configuration.inc|
+	\end{itemize}
+	\item \textbf{Složene strukture} - sadrži fajl u kojem se nalaze definicije složenih struktura podataka koje su korišćene prilikom izrade projekta.
+	\begin{itemize}
+	\item \verb|structures.inc|
+	\end{itemize}
+\item \textbf{Rad sa tekstualnom datotekom} - sadrži fajlove za deklaracije i definicije procedura korišćenih za obradu sadržaja tekstualne datoteke.
+	\begin{itemize}
+	\item \verb|file_process.inc|
+	\item \verb|file_process.asm|
+	\end{itemize}
+\item \textbf{Formiranje \textit{Huffman}-ovog stabla i rad sa njim} - sadrži deklaracije i definicije procedura korišćenih za rad sa \textit{Huffman}-ovim stablom.
+	\begin{itemize}
+	\item \verb|huffman_tree.inc|
+	\item \verb|huffman_tree.asm|
+	\end{itemize}
+\item \textbf{Glavni program} - sadrži glavni program koji koristi sve pomoćne procedure definisane u ostalim fajlovima.
+	\begin{itemize}
+	\item \verb|main.asm|
+	\end{itemize}
+\end{enumerate}
+
+\btmline\newpage
+%==========================================================================
+
+\subsubsection*{\textit{Include} fajlovi}
+Svaki \verb|.inc| fajl zaštićen je od višestrukog uključivanja u projekat definisanjem makroa, čije se postojanje proverava prilikom uključivanja u projekat.
+Primer koda koji ovo obezbeđuje prikazan je u nastavku.
+
+\begin{verbatim}
+ifndef _FILENAME_INC_
+_FILENAME_INC_ = 0
+
+	; content goes here
+	
+endif
+\end{verbatim}
+
+\subsubsection*{Strukture podataka}
+Grafički prikaz struktura koje su korišćene prikazan je na slici \ref{struct}. 
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=.5\textwidth]{structures}
+\caption{Strukture podataka}
+\label{struct}
+\end{figure}
+
+Polje \verb|symbol| strukture \verb|Data_S| sadrži karakter, a polje \verb|number| sadrži njegov broj ponavljanja.
+Struktura \verb|Node_S| predstavlja čvor u \textit{Huffman}-ovom stablu . Polja \verb|left| i \verb|right| koriste se 
+za određivanje deteta datog čvora. Detaljnije o ovome u nastavku.
+
+\btmline\newpage
+%==========================================================================
+
+\section*{Rad sa datotekom}
+
 
 
 \btmline\newpage
+%==========================================================================
+\section*{Formiranje stabla}
+\btmline\newpage
+%==========================================================================
+\section*{Dobijanje koda na osnovu stabla}
+
+
+\btmline\newpage
+%==========================================================================
 \end{document}
