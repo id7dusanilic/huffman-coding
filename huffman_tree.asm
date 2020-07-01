@@ -91,10 +91,13 @@ pop		eax
 ret
 PrintCodes ENDP
 
+; // ========================================================================
 
 FormTree PROC,	input: 	PTR Data_S, \
 		len: 	BYTE, \
 		output: PTR Node_S
+		
+; // ========================================================================
 
 LOCAL temparray[255] : BYTE
 	push ebp ; // pushed again to the stack because it is to be used
